@@ -1,0 +1,101 @@
+# Given Data:
+user_data = [
+    " Anu, anu@gmail.com , 21 ",
+    "Ravi ,ravi123gmail.com, 17",
+    " Suresh,suresh@gmail.com,25 ",
+    "Meena,meena@gmail,22",
+    ",invalid@gmail.com,30"
+]
+
+# 1. Data Cleaning
+
+total_records = 0 
+valid_users = 0 
+invalid_users = 0 
+eligible_users = 0 
+underage_users = 0
+
+domain_count = {}
+
+for user in user_data:
+    total_records = total_records+1
+    
+    user = user.strip()
+    user_details = user.split(",")
+    cleaned_data = []
+    for details in user_details:
+        cleaned_data.append(details.strip())
+
+    name = cleaned_data[0].title()
+    email = cleaned_data[1].lower()
+    age = int(cleaned_data[2])
+    email_last_index=len(email)-1
+
+    #2. Email Validation    
+    if email[0] != "@" and email[email_last_index] != "@":
+        #Bonus Task: Extract email domains
+        domain = email[email.find("@")+1:]
+        
+        if email.count("@") == 1:
+            
+            if domain.find(".") != -1:
+                valid_email = True
+
+                #Bonus Task: Count users per domain
+                if domain in domain_count: 
+                    domain_count[domain] = domain_count[domain] + 1 
+                else: 
+                    domain_count[domain] = 1
+            
+            else:
+                valid_email = False
+        else:
+            valid_email = False
+    else:
+        valid_email = False
+
+    #3. Age Validation
+    if age >= 18:
+        under_age = False 
+        eligible_users = eligible_users+1
+    else: 
+        under_age = True
+        underage_users = underage_users+1
+            
+    #4. Invalid Record Identification
+    invalid_reasons = []
+    if name != "" and valid_email and not under_age:
+        valid_users = valid_users+1
+    else:
+        invalid_users = invalid_users+1
+        if name =="":
+            invalid_reasons.append("Missing name")
+        if not valid_email:
+            invalid_reasons.append("Invalid email")
+        if under_age:
+            invalid_reasons.append("Under age")
+
+    # 6. Output Formatting
+    if invalid_reasons:
+        print("Invalid user")
+        output = "Name: " + name + " | Email: " + email + " | Age: %d" %age 
+        print(output)
+        print(invalid_reasons)
+        print("\n")
+    else:
+        print("Valid user")
+        output = "Name: " + name + " | Email: " + email + " | Age: %d" %age 
+        print(output + "\n")
+
+#5. Summary Report
+print("Summary Report") 
+print("--------------") 
+print("Total Records:", total_records) 
+print("Valid Users:", valid_users) 
+print("Invalid Users:", invalid_users) 
+print("Eligible Users (>=18):", eligible_users) 
+print("Underage Users (<18):", underage_users)    
+
+print("\nDomain Summary:") 
+for i in domain_count: 
+    print(i, "-", domain_count[i])
